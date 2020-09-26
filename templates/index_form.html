@@ -2,131 +2,274 @@
 <html>
 <head>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1" />
-    <title>分帳表單</title>
+    <title>記錄欠款</title>
     <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script>
-    function print_value() {
-        <!-- 將 select 的值在印出 -->
-        document.getElementById("result") = document.getElementById("number").value
-    }
-</script>
+    <script>  
+        var countMin = 1;  
+        var countMax = 10; 
+        var commonName = "T";
+        var commonsplit = "splitter";
+        var count = countMin;  
+        function addField() {  
+            if(count == countMax)  
+                alert("最多"+countMax+"個欄位");  
+            else      
+                document.getElementById("fieldSpace").innerHTML += "<p><strong>人名 " + (++count) + '：<input id="' + commonsplit + (count)+'" type="text" name="' + commonName + 1 + '"></strong></p>';
+              
+        } 
+        function delField() { 
+            if (count > countMin) { 
+                var fs = document.getElementById("fieldSpace");  
+                fs.removeChild(fs.lastChild); 
+                count--; 
+            } else { 
+                alert("無新增欄位可以刪除"); 
+            }    
+        } 
+</script> 
 <script>
 	function initializeApp(data) {  //初始化LIFF
         var userid = data.context.userId;
         var groupid = data.context.groupId; //取得ID
-        document.getElementById('post_groupID').value =groupid;
 
-	}
-	function pushMsg(item, cost) {
+    }
 
-		if (item == '' || cost == '') {  //資料檢查
-            alert('每個項目都必須輸入！');
-            return;
-        }
-        var form = document.getElementById("form_name");
-        for(var i=0; i<form.category.length;i++){
-                if(form.category[i].checked){
-                    var category = form.category[i].value;
-                }
-            }
+// 	function getMsg(item, cost) {
 
-        var tag = document.getElementById("form_tag");
-        for(var i=0; i<tag.tagName.length;i++){
-                if(tag.tagName[i].checked){
-                    var tagName =tag.tagName[i].value;
-                }
-            }
-        
-        var msg = "分帳 ";  //回傳訊息字串
-		msg = msg + category + item ;
-        msg = msg + tagName + " ";
-        msg = msg + cost + " ";
-        payer = document.getElementById("number").value;
-        if (payer == '請選擇'){
-            alert('請重新選擇代墊者！');
-            return;
-        }
-        msg = msg + payer + " ";
+//     if (item == '' || cost == '') {  //資料檢查
+//         alert('每個項目都必須輸入！');
+//         return;
+//     }
 
-        var obj=document.getElementsByName("c14");
-        var selected=[];
-        for (var i=0; i<obj.length; i++) {
-            if (obj[i].checked) {
-            msg = msg +obj[i].value +" ";
 
-          }
-        }
-        
+//     var tag = document.getElementById("form_tag");
+//     for(var i=0; i<tag.tagName.length;i++){
+//             if(tag.tagName[i].checked){
+//             var tagName =tag.tagName[i].value;
+//         }
+//     }
 
-		liff.sendMessages([  //推播訊息
+//     var msg = "分帳 ";  //回傳訊息字串
+//     msg = msg + category + item ;
+// msg = msg + tagName + " ";
+// msg = msg + cost + " ";
+// payer = document.getElementById("number").value;
+// if (payer == '請選擇'){
+//     alert('請重新選擇代墊者！');
+//     return;
+// }
+// msg = msg + payer + " ";
+
+// var obj=document.getElementsByName("c14");
+// var selected=[];
+// for (var i=0; i<obj.length; i++) {
+//     if (obj[i].checked) {
+//     msg = msg +obj[i].value +" ";
+
+//   }
+// }
+
+
+// liff.sendMessages([  //推播訊息
+//     { type: 'text',
+//       text: msg 
+//     },
+// ])
+//     .then(() => {
+//         liff.closeWindow();  //關閉視窗
+//     });
+// }
+
+    function pushMsg(splitter1) {
+
+    if (splitter1 == '') {  //資料檢查
+        alert('每個項目都必須輸入！');
+        return;
+    }
+    var obj=document.getElementsByName("T1");
+    var msg = "@欠款設定 ";
+    for(i=0;i<obj.length;i++){
+        msg = msg+ obj[i].value+' ';
+}
+
+        liff.sendMessages([ 
 			{ type: 'text',
-			  text: msg 
-			},
-		])
+			  text: msg
+            },
+        ])
+        .then(() => {
+            liff.closeWindow();  //關閉視窗
+        });
+
+    }
+
+        function deleteMsg() {
+
+    var msg = "@設定刪除";
+    if (confirm("確認要清除所有人嗎？")){
+        liff.sendMessages([ 
+			{ type: 'text',
+			  text: msg
+            },
+        ])
 			.then(() => {
-				liff.closeWindow();  //關閉視窗
+			alert('已清空所有人');
+            window.location.reload();
 			});
-	}
+    }else{
+        window.event.returnValue = false;
+    }
+    }
 
 	$(document).ready(function () {
     
-		liff.init(function (data) {  //初始化LIFF
-            initializeApp(data);
-		});
-		
-        $('#sure').click(function (e) {  //按下確定鈕
+    liff.init(function (data) {  //初始化LIFF
+        initializeApp(data);
+    });
+
+    // $('#verysure').click(function (e) {  //按下確定鈕
             
-			pushMsg($('#item').val(), $('#cost').val()); 
-		});
-	});
-</script>
-<script type="text/javascript">
-    function checkAll(obj, cName) {
-             var checkboxs = document.getElementsByName(cName);
-             $("input[name=" + cName + "]").prop("checked", true).trigger("click");
-             for (var i = 0; i < checkboxs.length; i++) {
-                 checkboxs[i].checked = obj.checked;
-             }
-     }
-</script>
- <script type="text/javascript">
-function divShow(){
-document.getElementById("btnshow").style.display="block";
-document.getElementById("btnhref").innerHTML ="隱藏分類";
-document.getElementById("btnhref").href ="javascript:divhidden()";
-}
-function divhidden(){
-document.getElementById("btnshow").style.display="none";
-document.getElementById("btnhref").innerHTML ="分類";
-document.getElementById("btnhref").href ="javascript:divShow()"; 
-}
+	// 		getMsg($('#item').val(), $('#cost').val()); 
+	// 	});
+    
+    $('#sure').click(function (e) {  //按下確定鈕
+        
+        pushMsg($('#splitter1').val()); 
+    });
+
+        $('#delete').click(function (e) {  //按下確定鈕
+        
+        deleteMsg();
+    });
+});
+
 </script>
 <style>
-    body{
-      background-color: #FFEEDD;
+body{
+  background-color: #FFEEDD;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 
-      /* font-size:20px; */
+}
 
-    }
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    
-    }
-    
-    li {
-      float: left;
-      justify-content:center;
-    }
-    input{
+li {
+  float: left;
+  justify-content:center;
+}
+
+div {
+    background-color:#FFEEDD;
+    text-align:center;
+}
+
+input{
     background-color: #fff4f4;
     border-color:#FFFFFF;
     border-radius: 12px;
+}
+.button1 {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0px 17px;
+    border: 1px solid #a88d8d;
+    border-radius: 7px;
+    background: #ffe0b2;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffe0b2), to(#ffdb94));
+    background: -moz-linear-gradient(top, #ffe0b2, #ffdb94);
+    background: linear-gradient(to bottom, #ffe0b2, #ffdb94);
+    -webkit-box-shadow: #fff1f1 0px 0px 46px 0px;
+    -moz-box-shadow: #fff1f1 0px 0px 46px 0px;
+    box-shadow: #fff1f1 0px 0px 46px 0px;
+    text-shadow: #ffffff 1px 1px 1px;
+    font: normal normal bold 20px arial;
+    color: #614a11;
+    text-decoration: none;
+}
+.button1:hover,
+.button1:focus {
+    border: 1px solid #f0c9c9;
+    background: #ffffd6;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffd6), to(#ffffb2));
+    background: -moz-linear-gradient(top, #ffffd6, #ffffb2);
+    background: linear-gradient(to bottom, #ffffd6, #ffffb2);
+    color: #614a11;
+    text-decoration: none;
+}
+.button1:active {
+    background: #99866b;
+    background: -webkit-gradient(linear, left top, left bottom, from(#99866b), to(#ffdb94));
+    background: -moz-linear-gradient(top, #99866b, #ffdb94);
+    background: linear-gradient(to bottom, #99866b, #ffdb94);
+}
+.button1:before{
+    content:  "\0000a0";
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    margin: 0 4px -6px -4px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUAgMAAADw5/WeAAAADFBMVEX/mTPsdAD/////rFtmQHhJAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAARElEQVQImWPY/////38MBxgYGBixkqvA5DQHEDkJRGpNWgEkVQMigaQKAydIpGklkGSdFApXw7AKTIo6YDNzamhoaBgAgkYdOo4tc+gAAAAASUVORK5CYII=") no-repeat left center transparent;
+    background-size: 100% 100%;
+}
+
+.button2 {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0px 17px;
+    border: 1px solid #a88d8d;
+    border-radius: 7px;
+    background: #b2eaff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#b2eaff), to(#94afff));
+    background: -moz-linear-gradient(top, #b2eaff, #94afff);
+    background: linear-gradient(to bottom, #b2eaff, #94afff);
+    -webkit-box-shadow: #fff1f1 0px 0px 46px 0px;
+    -moz-box-shadow: #fff1f1 0px 0px 46px 0px;
+    box-shadow: #fff1f1 0px 0px 46px 0px;
+    text-shadow: #ffffff 1px 1px 1px;
+    font: normal normal bold 20px arial;
+    color: #001891;
+    text-decoration: none;
+}
+.button2:hover,
+.button2:focus {
+    border: 1px solid #f0c9c9;
+    background: #d6ffff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#d6ffff), to(#b2d2ff));
+    background: -moz-linear-gradient(top, #d6ffff, #b2d2ff);
+    background: linear-gradient(to bottom, #d6ffff, #b2d2ff);
+    color: #001891;
+    text-decoration: none;
+}
+.button2:active {
+    background: #6b8c99;
+    background: -webkit-gradient(linear, left top, left bottom, from(#6b8c99), to(#94afff));
+    background: -moz-linear-gradient(top, #6b8c99, #94afff);
+    background: linear-gradient(to bottom, #6b8c99, #94afff);
+}
+.button2:before{
+    content:  "\0000a0";
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
+    margin: 0 4px -6px -4px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUAgMAAADw5/WeAAAADFBMVEVUpN47cpuIv+j////WN4xEAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAMklEQVQImWN4tWrVqtUMDQwMDIzEkfb//wBJ09BYIGnCwAsW+QskWUNDiTPhamhoaDgATK0VHVjI0UwAAAAASUVORK5CYII=") no-repeat left center transparent;
+    background-size: 100% 100%;
 }
 .button3 {
     display: inline-block;
@@ -176,69 +319,124 @@ document.getElementById("btnhref").href ="javascript:divShow()";
     background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAADZElEQVRIiYWWTWhcVRTHf+fOS6ajY8ROqEn9oA0jhYlMptmIKG5GsCjUOJZmE7t1EZrOxkA2bkPRRbS6cxMpBYMpSXcuXJa2Qs2kYjeGQSiY2jZdJFPFyfBOF/e+N3fmzcQDj/fnzr3n43fPfXcEMPSw0uoSCHngDFAGKYAecT8/AO4CPwMrItQ3Pqr2coO4AKEfqHR1aQxYBKZEJABQVUQk4UDRFsoasFCrVLc8PyFg/ACcWLtoMmF6BvgWkazETmwmfiBVtRm2dQOYDZ9tXr7z3nyUcBhn7ZzPC7IsQlZQFAUUX8ele8U4nUVk2TwZnC/+9EWcdBTAZML0jCCLKqAqqAq4t69BbJge2oVbNE8GZpxvi8gx3xCRbDdvRRHaGqUfog5cChOblWpdSqtLBuEHbLe4JNo0PBlrG1xR7a+BH1V02rhWnBIR4gf7xj0J7cLZufDhq+McSg10jCNMicqYAc4IrhVdrqpqMfmd42l/bG78LT4/WebLNz4gbQJvrQTAWQOUbVmWr6rG+2XHNKEBjAgXxt/mXH4SgOILI7ySfZ6uo1I2IAV8PA5RLv1MX0RR5udem0REaLSanL95ja3dnTYiawUDeiTaxQjR9PEiq+9+wsTh0QSi2Hl+ElVlb/8/5m5cY3Pnrw68zoZN5DhCVDw8ymfFdxgaSHPpzdOJID6Wxn6T8zfWqUXOPTaRNsADH89vj7f5fmsDEeE5F6SUO4oR6YFlnTuP73to6dDAo9TI9Kn3ReR4XJYItx7e41AqoJQ7yoBJUX4pT35omI+PvW4zbzUdlu0DDx3wS2pk+tTLtpM67dbDe6RNQCk3yqBJkR/KAbC332Tu5jqbO9txQrEl9XcGWEFoSVcnAVy6e53lrV/jsUbLOj8IS7xeaQErRkTrKGv+7qu2v51f/36d5T9ue92yneiW3lqvgtQ7PnZAthtVxPPFTJb7/+y1y/f2LKGFXZSTtUq1bgDcTTSbOHAerr//bfwvFonQK7O1SvVPwMQXTnM/uIzqgnqIrHXpg7GgykIqyFxxC8KOK7Ow8o0ZDFr2yuyD6wBEu8BsKshcuX360zCeSu9L/xhwEWRKhKBvIECVlt1QFhyWzlz8CpwZIJxY+8pIqGPAWew5KQDDbs4jvL8tIPVa5ULY5csA4VNmacA+KQyNlAAAAABJRU5ErkJggg==") no-repeat left center transparent;
     background-size: 100% 100%;
 }
-    </style>
+.button4 {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0px 17px;
+    border: 1px solid #a88d8d;
+    border-radius: 7px;
+    background: #ffb5b5;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffb5b5), to(#ffd6d6));
+    background: -moz-linear-gradient(top, #ffb5b5, #ffd6d6);
+    background: linear-gradient(to bottom, #ffb5b5, #ffd6d6);
+    -webkit-box-shadow: #fff1f1 0px 0px 46px 0px;
+    -moz-box-shadow: #fff1f1 0px 0px 46px 0px;
+    box-shadow: #fff1f1 0px 0px 46px 0px;
+    text-shadow: #ffffff 1px 1px 1px;
+    font: normal normal bold 20px arial;
+    color: #611111;
+    text-decoration: none;
+}
+.button4:hover,
+.button4:focus {
+    border: 1px solid #f0c9c9;
+    background: #ffd9d9;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffd9d9), to(#ffffff));
+    background: -moz-linear-gradient(top, #ffd9d9, #ffffff);
+    background: linear-gradient(to bottom, #ffd9d9, #ffffff);
+    color: #611111;
+    text-decoration: none;
+}
+.button4:active {
+    background: #996d6d;
+    background: -webkit-gradient(linear, left top, left bottom, from(#996d6d), to(#ffd6d6));
+    background: -moz-linear-gradient(top, #996d6d, #ffd6d6);
+    background: linear-gradient(to bottom, #996d6d, #ffd6d6);
+}
+.button4:before{
+    content:  "\0000a0";
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    line-height: 16px;
+    margin: 0 4px -6px -4px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABDElEQVQ4jZ3ToUtDURTH8Q8LS7KwZDKIGExiEIMYTLI/wGIxLRr2BwwMYtqfsGgQg0m0GExLYrENBMOSLAzDQBjX8O70enGP8S4cOLzz+/7OPZz7hBCkgVWcY4AZAp7Rx3GmPcvhLqYRWhQDbKOFWQpfJ6LHKGigjl10MIz1MSb4gS9i4ROn+VhJk3ocZZI0s5nM2loEJwZP2UguY3JTBkeDfgZP4WWZ7ouihnXFeVXh1JL8q6rBW8x3qho8xPykigFsKNY4w8ESm2gqXmMX9fnHnmITHzgqgffwHrVDrM0LNdz73W8f+4qH08QhbpP6HRohBHmHjvKfaYz2H+afa27hCqMIjeLt2ljJ9d+VbDplf9a6VgAAAABJRU5ErkJggg==") no-repeat left center transparent;
+    background-size: 100% 100%;
+}
+
+</style>
 </head>
 <body>
 
-<div align="center">
-    <ul>
-        <li><img src="https://imgur.com/JV8bflw.png" width=100px height=auto align=center></img></li>
-        <li><h1 style="line-height:100px;"><strong>記錄分帳</strong></h1></li>
-      </ul>
-<a href="javascript:divShow();" id="btnhref" class="btn-slide" align:"left">分類</a>
-    <div style="display: none;" id="btnshow">
-    <br/>
-    <form name="form_tag" id="form_tag">
-        <label><input name="tagName" type="radio" value="" checked>不分類</label>
-        <label><input name="tagName" type="radio" value="#餐飲">餐飲</label>
-		<label><input name="tagName" type="radio" value="#住宿">住宿</label>
-        <label><input name="tagName" type="radio" value="#交通">交通</label>
-        <label><input name="tagName" type="radio" value="#行程">行程</label>
-    
-    </div>
-<br/>
-    <p><strong><form>項目：<input id="item" type="text" name="項目" ></strong></p></form>
-    <p><strong><form>金額：<input id="cost" type="number" name="金額"></strong></p></form>
-	<form name="form_name" id="form_name">
-        <label><input name="category" type="radio" value="" checked>台幣</label>
-        <label><input name="category" type="radio" value="JPY/">日圓</label>
-		<label><input name="category" type="radio" value="USD/">美元</label>
-        <label><input name="category" type="radio" value="EUR/">歐元</label>
-    <br/><br/>
-    <!--<p><strong><form>代墊者：<input id="payer" type="text" name="欄位名稱"></strong></p></form>-->
-    <style>
-        .text{
-        width:100%;
-        }
-        .text select{
-        width:170px; 
-        height:30px;
-        line-height: 55px;
-        font-size:18px;
-        border: 1px solid #000;
-        border-radius:10px
-        }
-    </style>
-    <div style="margin-bottom:10px; "><strong>代墊者：</strong>
-    <span class="text">
-    <select name="number" id="number" onchange="print_value();" class="text-select">
-        <option value='請選擇'>&nbsp 請選擇</option>
+<ul>
+  <li>
+  <img src="https://imgur.com/JV8bflw.png" width=100px height=auto align=center></img>
+  </li>
+  <li>
+  <h1 style="line-height:100px;"><strong>記錄欠款</strong></h1>
+</li>
+</ul>
+
+<div>
+<p style="background-color: #fff9c4;font-size:20px;text-align: left;"><strong style="margin: 20px;">記錄</strong></p>
+<p><strong>我<select name="number" id="number" onchange="print_value();" class="text-select"><option value='請選擇'>&nbsp 欠/借</option><option>&nbsp 借</option><option>&nbsp 欠</option></select>了        <span class="text">
+    <select name="people" id="people" onchange="print_value();" class="text-select">
+        <option value='請選擇'>&nbsp 誰</option>
         {% for list in new_list %}
         <option id="{{ list }}" value="{{ list }}">{{ list }}</option>
         {% endfor %}
     </select>
-</span> </div>
-    <p id="result" type="hidden" name="欄位名稱"></p>
-    <div style="margin:10px; "><p><strong> 以下請勾選分帳者：</strong></p></div>
-    <div style="margin-left:1px">
-    <input type="checkbox" id="cAll" name="cAll" onclick="checkAll(this, 'c14')" />全選<br/><br/>
-    {% for list in new_list %}
-    <input type="checkbox" id ="{{ list }}" name="c14" value="{{ list }}" />{{ list }}<br/><br/>
-    {% endfor %}
-    </div>
+</span>錢</strong></p>
+<p><strong><form>項目：<input id="item" type="text" name="項目" ></strong></form></p>
+    <p><strong><form>金額：<input id="cost" type="number" name="金額"></strong></form></p>
+	<!-- <form name="form_name" id="form_name">
+        <label><input name="category" type="radio" value="" checked>台幣</label>
+        <label><input name="category" type="radio" value="JPY/">日圓</label>
+		<label><input name="category" type="radio" value="USD/">美元</label>
+        <label><input name="category" type="radio" value="EUR/">歐元</label></form> -->
+    <br/><br/>
+</div>
 
-    <a class="button3" type="button" name="ok" id="sure" value="確認送出">確認</a><br></br>
+        <div><a class="button3" type="button" name="ok" id="verysure" value="確認送出">確認</a><br></br></div>
+
+<div>
+    
+    <p style="background-color: #fff9c4;font-size:20px;text-align: left;"><strong style="margin: 20px;">輸入人名</strong></p>
+    <form>
+        <p><strong>人名 1：<input id="splitter1" type="text" name="T1"></strong></p>
+        <span id="fieldSpace"></span>
+        <a class="button1" href="javascript:" onclick="addField()">增加</a> 
+        <a class="button2" href="javascript:" onclick="delField()">減少</a> 
+    </form> 
+    <br/><br>
+    <a id="sure" class="button3">確認</a><br/>
+    <br/>
+    <p style="background-color: #fff9c4;font-size:20px;text-align: left;"><strong style="margin: 20px;">已設定人名</strong></p>
+        
+    
+        {% for list in new_list %}
+        <p>{{ list }}</p>
+        {% endfor %}
+        <br/>
+        <p align="left" style="font-size:18px;"><strong style="margin: 20px;">&nbsp編輯：</strong></p>
+        <form>
+            <select id=theList size=5>
+                <option value='請選擇'>請選擇</option>
+                {% for _data in new_list %}
+                <option id="{{ _data }}" value="{{ _data }}">{{ _data }} </option>
+                {% endfor %}
+        
+            </select>
+            <br/><br/>
+            <input type="button" value="刪除此人" onclick="deleteOption(theList)" class="button2"><br>
+            </form>
+            <br/>
+    <input type="button" name="ok" id="delete" class="button4" value="重設人名"><br>
+    <br/>
 </div>
 </body>
 </html>
-

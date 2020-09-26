@@ -30,13 +30,13 @@ class usermessage(db.Model):
 @app.route('/',methods=['POST','GET'])
 def index():
     if request.method == 'POST':
-        groupId = request.values['groupId']
+        userId = request.values['userId']
         # SetMsgNumber = usermessage.query.order_by(usermessage.birth_date).filter(usermessage.group_id==groupId).filter(usermessage.status=='set').count()
-        data_UserData = usermessage.query.order_by(usermessage.birth_date).filter(usermessage.group_id==groupId).filter(usermessage.status=='set')
-        GroupPeopleString=''
+        data_UserData = usermessage.query.order_by(usermessage.birth_date).filter(usermessage.group_id==userId).filter(usermessage.status=='debt_set')
+        UserString=''
         for _data in data_UserData:
-            GroupPeopleString += _data.nickname +' '
-        new_list = GroupPeopleString.strip('  ').split(' ')
+            UserString += _data.nickname +' '
+        new_list = UserString.strip('  ').split(' ')
         new_list=list(set(new_list)) #刪除重複
 
         return render_template('index_form.html',**locals())

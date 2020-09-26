@@ -32,7 +32,7 @@ def index():
     if request.method == 'POST':
         userId = request.values['userId']
         # SetMsgNumber = usermessage.query.order_by(usermessage.birth_date).filter(usermessage.group_id==groupId).filter(usermessage.status=='set').count()
-        data_UserData = usermessage.query.order_by(usermessage.birth_date).filter(usermessage.group_id==userId).filter(usermessage.status=='debt_set')
+        data_UserData = usermessage.query.order_by(usermessage.birth_date).filter(usermessage.user_id==userId).filter(usermessage.status=='debt_set')
         UserString=''
         for _data in data_UserData:
             UserString += _data.nickname +' '

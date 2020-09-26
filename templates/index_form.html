@@ -30,6 +30,13 @@
             }    
         } 
 </script> 
+
+<script>
+    function print_value() {
+        <!-- 將 select 的值在印出 -->
+        document.getElementById("result") = document.getElementById("number").value
+    }
+</script>
 <script>
 	function initializeApp(data) {  //初始化LIFF
         var userid = data.context.userId;
@@ -37,51 +44,32 @@
 
     }
 
-// 	function getMsg(item, cost) {
+ 	function getMsg(item, cost) {
 
-//     if (item == '' || cost == '') {  //資料檢查
-//         alert('每個項目都必須輸入！');
-//         return;
-//     }
+     if (item == '' || cost == '') {  //資料檢查
+         alert('每個項目都必須輸入！');
+         return;
+     }
 
-
-//     var tag = document.getElementById("form_tag");
-//     for(var i=0; i<tag.tagName.length;i++){
-//             if(tag.tagName[i].checked){
-//             var tagName =tag.tagName[i].value;
-//         }
-//     }
-
-//     var msg = "分帳 ";  //回傳訊息字串
-//     msg = msg + category + item ;
-// msg = msg + tagName + " ";
-// msg = msg + cost + " ";
-// payer = document.getElementById("number").value;
-// if (payer == '請選擇'){
-//     alert('請重新選擇代墊者！');
-//     return;
-// }
-// msg = msg + payer + " ";
-
-// var obj=document.getElementsByName("c14");
-// var selected=[];
-// for (var i=0; i<obj.length; i++) {
-//     if (obj[i].checked) {
-//     msg = msg +obj[i].value +" ";
-
-//   }
-// }
+     var msg="我";
+     var status = document.getElementById("number").value;
+     var debt_person = document.getElementById("people").value;
+     msg = msg + status + " ";
+     msg = msg + debt_person + " ";
+     msg = msg + item + " ";
+     msg = msg + cost ;
 
 
-// liff.sendMessages([  //推播訊息
-//     { type: 'text',
-//       text: msg 
-//     },
-// ])
-//     .then(() => {
-//         liff.closeWindow();  //關閉視窗
-//     });
-// }
+
+    liff.sendMessages([  //推播訊息
+        { type: 'text',
+        text: msg 
+        },
+    ])
+        .then(() => {
+            liff.closeWindow();  //關閉視窗
+        });
+    }
 
     function pushMsg(splitter1) {
 
@@ -130,10 +118,10 @@
         initializeApp(data);
     });
 
-    // $('#verysure').click(function (e) {  //按下確定鈕
+    $('#verysure').click(function (e) {  //按下確定鈕
             
-	// 		getMsg($('#item').val(), $('#cost').val()); 
-	// 	});
+			getMsg($('#item').val(), $('#cost').val()); 
+		});
     
     $('#sure').click(function (e) {  //按下確定鈕
         
@@ -383,7 +371,13 @@ input{
 
 <div>
 <p style="background-color: #fff9c4;font-size:20px;text-align: left;"><strong style="margin: 20px;">記錄</strong></p>
-<p><strong>我<select name="number" id="number" onchange="print_value();" class="text-select"><option value='請選擇'>&nbsp 欠/借</option><option>&nbsp 借</option><option>&nbsp 欠</option></select>了        <span class="text">
+
+<p><strong>我<select name="number" id="number" onchange="print_value();" class="text-select">
+<option value='請選擇'>&nbsp 欠/借</option>
+<option id="借" value="借">&nbsp 借</option>
+<option id="欠" value="欠">&nbsp 欠</option>
+</select>了        
+<span class="text">
     <select name="people" id="people" onchange="print_value();" class="text-select">
         <option value='請選擇'>&nbsp 誰</option>
         {% for list in new_list %}
@@ -393,11 +387,6 @@ input{
 </span>錢</strong></p>
 <p><strong><form>項目：<input id="item" type="text" name="項目" ></strong></form></p>
     <p><strong><form>金額：<input id="cost" type="number" name="金額"></strong></form></p>
-	<!-- <form name="form_name" id="form_name">
-        <label><input name="category" type="radio" value="" checked>台幣</label>
-        <label><input name="category" type="radio" value="JPY/">日圓</label>
-		<label><input name="category" type="radio" value="USD/">美元</label>
-        <label><input name="category" type="radio" value="EUR/">歐元</label></form> -->
     <br/><br/>
 </div>
 

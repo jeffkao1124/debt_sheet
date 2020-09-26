@@ -413,31 +413,30 @@ input{
         <br/>
         <p align="left" style="font-size:18px;"><strong style="margin: 20px;">&nbsp編輯：</strong></p>
         <script>
-            function deleteOption(list){
-                var index=list.selectedIndex;
-                var msg = '@remove';
-                msg=msg+index;
-            if(index>0 && confirm("確認要刪除？")){
-                liff.sendMessages([  
-                { type: 'text',
-                  text: msg
-                },
-            ])
-            .then(() => {
-                alert('已刪除該筆資料');
-                window.location.reload();
-                });
-            }else{
-                window.event.returnValue = false;
-            }
-    
-                if (index>0){
-                    list.options[index]=null;
-    
-                }else{
-                    alert("請選取要刪除的資料！");
-            }
-            }
+function deleteOption(list){
+        var index=list.selectedIndex;
+        var selOption = list.options[index];
+        var msg = '@remove';
+        msg=msg+selOption.text;
+    if(index>0 && confirm("確認要刪除？")){        
+        liff.sendMessages([  
+        { type: 'text',
+            text: msg
+        },
+    ])
+    .then(() => {
+        alert('已刪除該欠款者');
+        window.location.reload();
+        });
+    }else{window.event.returnValue = false;
+    }
+
+        if (index>0)
+            list.options[index]=null;
+
+        else
+            alert("未選擇欲刪除的分帳者！");
+    }
             </script>
         <form>
             <select id=theList size=5>

@@ -54,6 +54,10 @@
      var msg="我";
      var status = document.getElementById("number").value;
      var debt_person = document.getElementById("people").value;
+     if (status == '請選擇' || debt_person == '請選擇') {  //資料檢查
+         alert('每個項目都必須輸入！');
+         return;
+     }
      msg = msg + status + " ";
      msg = msg + debt_person + " ";
      msg = msg + item + " ";

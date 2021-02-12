@@ -1,5 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-import urllib
+from requests import urllib2
 
 # 宣告一個排程
 sched = BlockingScheduler()
@@ -8,7 +8,7 @@ sched = BlockingScheduler()
 @sched.scheduled_job('cron', day_of_week='mon-fri', minute='*/20')
 def scheduled_job():
     url = "https://debt0sheet.herokuapp.com/"
-    connect = urllib.request.urlopen(url)
+    connect = urllib2.urlopen(url)
     for key, value in connect.getheaders():
         print(key, value)
     

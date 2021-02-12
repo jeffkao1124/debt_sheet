@@ -11,4 +11,4 @@ Werkzeug==0.15.5
 jinja2
 datetime
 APScheduler
-urllib
+requests
